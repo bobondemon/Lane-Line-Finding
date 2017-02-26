@@ -93,9 +93,9 @@ Pixels are detected by the following function
 def identify_lane_pixel(img, lcenter_in, rcenter_in, win_num=9, win_half_width=150, start_from_button=False):
 ```
 
-* `lcenter_in` and `rcenter_in`are the center of searching windows (x-coordinate) at the bottom of the image.
+* `lcenter_in` and `rcenter_in`are the centers (in horizontal coordinate) of windows.
 
-* `win_num` defines how much window are going to used.
+* `win_num` defines how much window are going to used. In this example, 9.
 
 * `win_half_width` refers to the half length of window width
 
@@ -145,4 +145,6 @@ Please see the `project_video_out.mp4` in this repository.
 
 ### Discussion
 
-to be continue ...
+Basically, I applied those techniques provided by Udacity. However, for more difficult videos, pixels may not be detected. More robust of detection and smoothing methods are worth to try.
+
+Still working on it.
