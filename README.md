@@ -95,7 +95,7 @@ def identify_lane_pixel(img, lcenter_in, rcenter_in, win_num=9, win_half_width=1
 
 * `lcenter_in` and `rcenter_in`are the centers (in horizontal coordinate) of windows.
 
-* `win_num` defines how much window are going to used. In this example, 9.
+* `win_num` defines how many windows are used. In this example, 9.
 
 * `win_half_width` refers to the half length of window width
 
@@ -151,4 +151,4 @@ One way to overcome this problem is when this issue happens, the lane curve is s
 
 Generelizing this idea, a confidence measure of lane pixels is worth to apply. If the confidence is low, then set the lane curve as the same as previous frame might be a good way to better estimate result.
 
-Moveover, finding and tweaking more precisely of masking parameters may help too.
+Moveover, finding a robust combination of masking rule and tweaking those parameters precisely might help too.
