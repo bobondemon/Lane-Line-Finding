@@ -93,9 +93,9 @@ Pixels are detected by the following function
 def identify_lane_pixel(img, lcenter_in, rcenter_in, win_num=9, win_half_width=150, start_from_button=False):
 ```
 
-* `lcenter_in` and `rcenter_in`are the center of searching windows (x-coordinate) at the bottom of the image.
+* `lcenter_in` and `rcenter_in`are the centers (in horizontal coordinate) of windows.
 
-* `win_num` defines how much window are going to used.
+* `win_num` defines how much window are going to used. In this example, 9.
 
 * `win_half_width` refers to the half length of window width
 
@@ -126,7 +126,7 @@ r2 = ((1+(2*a2*height*ym_per_pix+b2)**2)**1.5)/(2*np.abs(a2))
 
 So I divide my result by 10 to make it seems more reasonable. And of course, the "order of magnitude" remains intact.
 
-<img src="./output_images/6_curvature.jpg" alt="lane pixel and fit" height="100%" width="100%">
+<img src="./output_images/6_curvature.jpg" alt="curvature_position" height="60%" width="60%">
 
 #### 7. Warp the detected lane boundaries back onto the original image
 
@@ -137,12 +137,18 @@ Then, simply apply `cv2.warpPerspective` with `Minv` as input.
 
 Note: use `cv2.putText` to print the curvature and position onto images
 
-<img src="./output_images/7_warp_back.jpg" alt="lane pixel and fit" height="100%" width="100%">
+<img src="./output_images/7_warp_back.jpg" alt="warp_back" height="60%" width="60%">
 
 #### 8. Video
 
-Please see the `project_video_out.mp4` in this repository.
+[![video](video.png)](https://youtu.be/KSX17t5EfAY)
 
 ### Discussion
 
-to be continue ...
+Basically, I applied those techniques suggested by Udacity. However, for more difficult videos, pixels may not be detected which makes the pipeline crash.
+
+One way to overcome this problem is when this issue happens, the lane curve is set to be the same as previous frame.
+
+Generelizing this idea, a confidence measure of lane pixels is worth to apply. If the confidence is low, then set the lane curve as the same as previous frame might be a good way to better estimate result.
+
+Moveover, finding and tweaking more precisely of masking parameters may help too.
