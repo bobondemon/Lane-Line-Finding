@@ -111,6 +111,36 @@ right_fit = np.polyfit(rpixely, rpixelx, 2)
 
 <img src="./output_images/5_lane_pixel_fit.jpg" alt="lane pixel and fit" height="100%" width="100%">
 
+But wait! Since we are assuming "birds-eye view", both lanes should be parallel!
+
+So I first tried a method that **ties the polynomial coefficients except the shifting ones!**
+
+<img src="./shared_poly_fit.png" alt="method of shared polyfit" height="80%" width="80%">
+
+this method results in the following example
+
+<img src="./example_with_shared_poly_fit.png" alt="example of shared polyfit" height="60%" width="60%">
+
+As can be seen in the figure, curves are indeed parallel. However, when I applied this method to the final video, I found that it **wobbling** a lot! (see "8. Video" below)
+
+After some investigation, I wonder that this problem is caused by the fixed source points of perspective.
+
+Since the pre-defined source points are always at the center of the camera while the lane curves are usually not, the result perspective curves is **intrinsically not parellel!**
+
+Hence, I applied a dynamic source point correction. Idea of method is showed in the follows:
+
+<img src="./dynamic_src_pts.png" alt="dynamic_src_pts" height="80%" width="80%">
+
+mapping inversely from coordinates in perspective images to original images can use the following formula:
+
+<img src="./perspective_formula.png" alt="dynamic_src_pts" height="50%" width="50%">
+
+and results in the following example
+
+<img src="./dynamic_perspective_src.png" alt="example of dynamic src pts" height="60%" width="60%">
+
+It works great! Unfortunately, **if the lane curves are not stable, the resulting new source points may fail**. This is the major difficulty of this method! (see "8. Video" below)
+
 #### 6. Radius of curvature of the lane and the position of the vehicle
 
 The curvature is calculated based on the following formula. Udacity provides a very good tutorial [here](http://www.intmath.com/applications-differentiation/8-radius-curvature.php) !
@@ -141,14 +171,38 @@ Note: use `cv2.putText` to print the curvature and position onto images
 
 #### 8. Video
 
-[![video](video.png)](https://youtu.be/KSX17t5EfAY)
+![video](video.png)
 
+* [Simple poly-fit](https://youtu.be/KSX17t5EfAY) (**Most stable!** Simple is better ?!)
+
+<!--[![video](video.png)](https://youtu.be/KSX17t5EfAY)-->
+
+* [Shared coefficients of poly-fit](https://youtu.be/lz70ohOOut8) (**Wobbling problem**)
+
+<!--[![video](video.png)](https://youtu.be/lz70ohOOut8)-->
+
+* [Dynamic source points of perspective](https://youtu.be/6WchWl8Ah5U) (**Unstable, crash sometimes.** If the lane curves are not stable, the resulting new source points may fail)
+
+<!--[![video](video.png)](https://youtu.be/6WchWl8Ah5U)-->
+
+---
 ### Discussion
 
-Basically, I applied those techniques suggested by Udacity. However, for more difficult videos, pixels may not be detected which makes the pipeline crash.
+Basically, I applied those techniques suggested by Udacity.
+
+I did some efforts trying to parallize both curves in the perspective "bird eye view". Two methods are applied
+
+1. Shared coefficients of polynomial fitting
+2. Dynamic source points of perspetive
+
+Each has its own issue. For (1.), wobbling, and for (2.) unstable.
+
+Future works will focus on solving the (2.) unstable issue. Maybe a smoothing method is a good idea.
+
+Moreover, for more difficult videos, pixels may not be detected which makes the pipeline crash.
 
 One way to overcome this problem is when this issue happens, the lane curve is set to be the same as previous frame.
 
 Generelizing this idea, a confidence measure of lane pixels is worth to apply. If the confidence is low, then set the lane curve as the same as previous frame might be a good way to better estimate result.
 
-Moveover, finding a robust combination of masking rule and tweaking those parameters precisely might help too.
+Finally, finding a robust combination of masking rule and tweaking those parameters precisely might help too.
